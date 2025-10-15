@@ -3,7 +3,7 @@
     <Form
       @submit="setFilters"
       :validation-schema="schema"
-      class="row g-3 mb-4"
+      class="row g-3"
       :validateOnBlur="false"
       :validateOnChange="false"
       :validateOnInput="false"

@@ -3,16 +3,6 @@
     <label :for="fieldId" class="form-label"
       >{{ label }}<span v-if="isRequired" class="text-danger">*</span></label
     >
-    <!-- <Field
-      :id="fieldId"
-      :type="type"
-      :name="name"
-      :value="modelValue"
-      :placeholder="placeholderValue"
-      @input="updateFieldValue"
-      class="form-control"
-      autocomplete="on"
-    /> -->
     <Field
       v-bind="fieldAttrs"
       :name="name"
@@ -21,7 +11,7 @@
       class="form-control"
       autocomplete="on"
     />
-    <ErrorMessage :name="name" class="text-danger position-absolute" />
+    <ErrorMessage :name="name" class="text-danger" />
   </div>
 </template>
 
