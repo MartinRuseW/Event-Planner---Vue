@@ -1,10 +1,10 @@
 <template>
-  <div ref="dropdownRef" class="custom-dropdown-wrapper">
+  <div class="custom-dropdown-wrapper">
     <label for="location" class="form-label label">
       Location<span class="text-danger">*</span>
     </label>
-    <div class="input-error-container">
-      <input v-model="selectedValue" @input="filterZones" @click.stop="toggleDropdown" placeholder="Enter location..."
+    <div class="input-error-container" ref="dropdownRef" >
+      <input v-model="selectedValue" @input="filterZones" @click.stop="toggleDropdown" @blur="validateLocation"  placeholder="Enter location..."
         class="form-control" />
       <span v-show="showError" class="error-message">Please choose location!</span>
     </div>
@@ -46,15 +46,15 @@ const selectZone = zone => {
   emit('selectZone', zone);
 };
 
+const validateLocation = () => {
+  showError.value = !selectedValue.value;
+};
+
 const toggleDropdown = () => showDropdown.value = !showDropdown.value;
 
 const handleClickOutside = e => {
   if (dropdownRef.value && !dropdownRef.value.contains(e.target)) {
     showDropdown.value = false;
-    
-    if (!selectedValue.value) {
-      showError.value = true;
-    }
   };
 };
 
