@@ -1,6 +1,6 @@
 <template>
-  <HeaderComponent></HeaderComponent>
-  <RouterView></RouterView>
+  <HeaderComponent />
+  <RouterView />
 </template>
 
 <script setup>
