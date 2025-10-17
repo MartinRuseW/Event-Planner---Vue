@@ -33,26 +33,20 @@ export const eventStore = defineStore('events', {
     getCoordinates(state) {
       return state.choosedEvent.location;
     },
-    filteredEvents: (state) => {
-      return state.events.filter((event) => {
-        const fromDate = state.filteredEvent.fromDate
-          ? new Date(state.filteredEvent.fromDate).toISOString().split('T')[0]
-          : null;
-        const toDate = state.filteredEvent.toDate
-          ? new Date(state.filteredEvent.toDate).toISOString().split('T')[0]
-          : null;
-        const eventDate = event.time ? event.time.split('T')[0] : null;
+    filteredEvents(state) {
+      const { search, fromDate, toDate, minPrice, maxPrice } = state.filteredEvent;
+      const query = search.toLowerCase();
 
-        const minPrice = parseFloat(state.filteredEvent.minPrice);
-        const maxPrice = parseFloat(state.filteredEvent.maxPrice);
-        const searchQuery = state.filteredEvent.search.toLowerCase();
+      return state.events.filter((event) => {
+        const eventDate = event.time?.split('T')[0];
+        const price = parseFloat(event.price);
 
         return (
           (!fromDate || eventDate >= fromDate) &&
           (!toDate || eventDate <= toDate) &&
-          (!minPrice || event.price >= minPrice) &&
-          (!maxPrice || event.price <= maxPrice) &&
-          (!searchQuery || event.name.toLowerCase().includes(searchQuery))
+          (!minPrice || price >= minPrice) &&
+          (!maxPrice || price <= maxPrice) &&
+          (!query || event.name.toLowerCase().includes(query))
         );
       });
     },
@@ -99,7 +93,7 @@ export const eventStore = defineStore('events', {
     },
     async removeEvent(eventId) {
       await eventServices.removeEvent(eventId);
-      this.getEvents();
+      this.events = this.events.filter(e => e.id !== eventId);
     },
     async buyTicket() {
       await eventServices.buyTicket(this.choosedEvent);
@@ -121,7 +115,7 @@ export const eventStore = defineStore('events', {
 
       await this.getEvents();
     },
-    applyFilters() { 
+    applyFilters() {
       return this.filteredEvent;
     },
     resetFilters() {

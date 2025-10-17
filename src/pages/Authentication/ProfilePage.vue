@@ -1,12 +1,5 @@
 <template>
-  <div
-    class="custom-overlay"
-    v-if="
-      uStore.isChangingUserLocation ||
-      uStore.isChangingUserPassword ||
-      uStore.isChangingUserImage
-    "
-  ></div>
+  <div class="custom-overlay" v-if="isModalOpen"></div>
   <div class="container-fluid">
     <div class="row align-items-start justify-content-around mt-5 ms-3 me-3">
       <div class="col-lg-4">
@@ -14,21 +7,11 @@
           <div class="px-4 pt-4 pb-4 text-white user-container">
             <div class="media align-items-end profile-header">
               <div class="profile mr-3 d-flex" style="z-index: 100">
-                <div class="image-edit-wrapper" @click="openImageModal">
-                  <img
-                    v-if="!user.imageUrl"
-                    src="@/utils/images//user-128.png"
-                    alt="..."
-                    width="130"
-                    class="rounded mb-2 img-thumbnail"
-                  />
-                  <img
-                    v-if="user.imageUrl"
-                    :src="user.imageUrl"
-                    alt="..."
-                    width="150"
-                    class="rounded mb-2 img-thumbnail img-fluid"
-                  />
+                <div class="image-edit-wrapper" @click="openModal('Image')">
+                  <img v-if="!user.imageUrl" src="@/utils/images//user-128.png" alt="..." width="130"
+                    class="rounded mb-2 img-thumbnail" />
+                  <img v-if="user.imageUrl" :src="user.imageUrl" alt="..." width="150"
+                    class="rounded mb-2 img-thumbnail img-fluid" />
                   <span class="edit-text"><i class="bi bi-pencil"></i></span>
                 </div>
               </div>
@@ -50,21 +33,11 @@
             </ul>
           </div>
           <div class="py-4 px-4">
-            <div
-              class="p-4 bg-light rounded shadow-sm d-flex justify-content-around"
-            >
-              <button
-                @click="changingPassword"
-                class="btn"
-                style="background-color: #212529; color: beige"
-              >
+            <div class="p-4 bg-light rounded shadow-sm d-flex justify-content-around">
+              <button @click="openModal('Password')" class="btn" style="background-color: #212529; color: beige">
                 Change Password
               </button>
-              <button
-                @click="changingLocation"
-                class="btn"
-                style="background-color: #212529; color: beige"
-              >
+              <button @click="openModal('Location')" class="btn" style="background-color: #212529; color: beige">
                 Change Location
               </button>
             </div>
@@ -92,35 +65,30 @@ import Calendar from '@/components/Calendar/Calendar.vue';
 
 const uStore = userStore();
 const eStore = eventStore();
-eStore.getEvents();
+
 const user = computed(() => uStore.currentUser);
 const events = computed(() => eStore.events);
 
-const usersAndTheirEvents = computed(() => {
-  return events.value.filter((event) =>
-    event.clients.includes(user.value.email)
-  );
-});
-
-const userEvents = computed(() =>
-  usersAndTheirEvents.value.map((event) => ({
-    title: event.name,
-    start: event.time,
-    id: event.id,
-  }))
+const isModalOpen = computed(() =>
+  uStore.isChangingUserLocation ||
+  uStore.isChangingUserPassword ||
+  uStore.isChangingUserImage
 );
 
-const changingPassword = () => {
-  uStore.isChangingUserPassword = true;
+const userEvents = computed(() =>
+  eStore.events
+    .filter((event) => event.clients.includes(uStore.currentUser?.email))
+    .map((event) => ({
+      title: event.name,
+      start: event.time,
+      id: event.id,
+    }))
+);
+
+const openModal = (type) => {
+  uStore[`isChangingUser${type}`] = true;
 };
 
-const changingLocation = () => {
-  uStore.isChangingUserLocation = true;
-};
-
-const openImageModal = () => {
-  uStore.isChangingUserImage = true;
-};
 
 onMounted(() => {
   eStore.getEvents();

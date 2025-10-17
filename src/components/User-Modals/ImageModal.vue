@@ -26,7 +26,6 @@
               class="form-control"
               id="imageFile"
               name="imageFile"
-              ref="imageFile"
               @change="handleFileUpload"
             />
             <ErrorMessage name="imageFile" class="text-danger position-absolute"/>

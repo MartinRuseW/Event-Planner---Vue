@@ -34,7 +34,7 @@ export const userStore = defineStore('userStore', {
     },
     async changePassword(email, currentPassword, newPassword) {
       await userServices.changePassword(email, currentPassword, newPassword);
-      this.currentUser = null;
+      await this.logout();
     },
     async editUser(userLocation, user) {
       try {
