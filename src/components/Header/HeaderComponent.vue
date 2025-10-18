@@ -7,7 +7,7 @@
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav ml-auto text-center">
 
-          <li v-if="isAdmin" class="nav-item px-2 text-danger fw-bold fs-5">
+          <li v-if="isAdmin" class="nav-item px-2 pt-2 text-danger fw-bold fs-5">
             <i class="bi bi-shield-lock"></i> Admin
           </li>
 
