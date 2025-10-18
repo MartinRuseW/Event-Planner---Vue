@@ -2,113 +2,22 @@
   <div class="container py-4 d-flex flex-column">
     <div class="card custom-card shadow align-self-center rounded-3 col-lg-8">
       <div class="card-header custom-card-header p-3 h4">Create Event</div>
-      <div
-        class="card-body d-flex justify-content-center align-self-center w-100"
-      >
+      <div class="card-body d-flex justify-content-center align-self-center w-100">
         <div v-if="createEventMessage" class="alert alert-danger">
           {{ createEventMessage }}
         </div>
-        <Form
-          @submit="handleCreateEvent"
-          :validationSchema="schema"
-          role="form"
-          class="d-flex flex-column column w-100"
-        >
-          <div class="d-flex mb-1">
-            <div class="form-group w-100 me-5">
+        <Form @submit="handleCreateEvent" :validationSchema="schema" role="form"
+          class="d-flex flex-column column w-100">
+          <div v-for="(group, gi) in inputGroups" :key="gi" class="d-flex mb-1">
+            <div v-for="(input, i) in group" :key="i" class="form-group w-100"
+              :class="{ 'me-5': i === 0, 'ms-5': i === 1 }">
+              <CustomInput v-if="input.type != 'file'" :fieldAttrs="{
+                type: input.type,
+                id: input.name,
+                placeholder: input.placeholder || '',
+              }" :label="input.label" :name="input.name" :isRequired="true" />
               <CustomInput
-                :fieldAttrs="{
-                  type: 'text',
-                  id: 'name',
-                  placeholder: 'Type name...',
-                }"
-                label="Name"
-                name="name"
-                isRequired
-              />
-            </div>
-            <div class="form-group w-100 ms-5">
-              <CustomInput
-                :fieldAttrs="{
-                  type: 'text',
-                  id: 'description',
-                  placeholder: 'Type description...',
-                }"
-                label="Description"
-                name="description"
-                isRequired
-              />
-            </div>
-          </div>
-          <div class="d-flex mb-1">
-            <div class="form-group w-100 me-5">
-              <CustomInput
-                :fieldAttrs="{
-                  type: 'number',
-                  id: 'tickets',
-                  placeholder: 'Type count of tickets...',
-                }"
-                label="Tickets"
-                name="tickets"
-                isRequired
-              />
-            </div>
-            <div class="form-group w-100 ms-5">
-              <CustomInput
-                :fieldAttrs="{
-                  type: 'number',
-                  id: 'price',
-                  placeholder: 'Type price...',
-                }"
-                label="Price"
-                name="price"
-                isRequired
-              />
-            </div>
-          </div>
-          <div class="d-flex mb-1">
-            <div class="form-group w-100 me-5">
-              <CustomInput
-                :fieldAttrs="{
-                  type: 'date',
-                  id: 'date',
-                }"
-                label="Date"
-                name="date"
-                type="date"
-                field-id="date"
-                isRequired
-              />
-            </div>
-            <div class="form-group w-100 ms-5">
-              <CustomInput
-                :fieldAttrs="{
-                  type: 'time',
-                  id: 'time',
-                }"
-                label="Time"
-                name="time"
-                type="time"
-                field-id="time"
-                isRequired
-              />
-            </div>
-          </div>
-          <div class="d-flex mb-1">
-            <div class="form-group w-50 me-5">
-              <CustomInput
-                :fieldAttrs="{
-                  type: 'number',
-                  id: 'budget',
-                  placeholder: 'Type budget...',
-                }"
-                label="Budget"
-                name="budget"
-                isRequired
-              />
-            </div>
-            <div class="form-group w-50 mb-4 ms-5">
-              <CustomInput
+              v-if="input.type === 'file'"
                 :fieldAttrs="{
                   type: 'file',
                   id: 'imageFile',
@@ -122,27 +31,17 @@
           </div>
           <div class="d-flex flex-column align-self-center w-100">
             <div class="d-flex justify-content-center">
-              <label
-                class="form-control-label custom-form-control-label mb-2"
-                for="location"
-                >Choose location<span class="text-danger">*</span></label
-              >
+              <label class="form-control-label custom-form-control-label mb-2" for="location">Choose location<span
+                  class="text-danger">*</span></label>
               <p v-if="errorMsg" class="text-danger mt-3 position-absolute">
                 {{ errorMsg }}
               </p>
             </div>
-            <MapComponent
-              class="mt-2"
-              style="height: 28.125rem; width: 51.875rem"
-              @selectedLocation="handleCoordinates"
-            ></MapComponent>
+            <MapComponent class="mt-2" style="height: 28.125rem; width: 51.875rem"
+              @selectedLocation="handleCoordinates"></MapComponent>
           </div>
           <div class="form-group align-self-center mt-2">
-            <button
-              type="submit"
-              class="btn custom-btn float-end mt-2"
-              for="form-group-input"
-            >
+            <button type="submit" class="btn custom-btn float-end mt-2" for="form-group-input">
               Create Event
             </button>
           </div>
@@ -198,6 +97,25 @@ const schema = yup.object({
   time: yup.string().required('This field is required!'),
   imageFile: yup.mixed().required('Event Image is required'),
 });
+
+const inputGroups = [
+  [
+    { label: 'Name', name: 'name', type: 'text', placeholder: 'Type name...' },
+    { label: 'Description', name: 'description', type: 'text', placeholder: 'Type description...' },
+  ],
+  [
+    { label: 'Tickets', name: 'tickets', type: 'number', placeholder: 'Type count of tickets...' },
+    { label: 'Price', name: 'price', type: 'number', placeholder: 'Type price...' },
+  ],
+  [
+    { label: 'Date', name: 'date', type: 'date' },
+    { label: 'Time', name: 'time', type: 'time' },
+  ],
+  [
+    { label: 'Budget', name: 'budget', type: 'number', placeholder: 'Type budget...' },
+    { label: 'Upload Image', name: 'imageFile', type: 'file', isFile: true },
+  ],
+];
 
 const store = eventStore();
 
